@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block head %}EcoPal
+
+<div data-role="navbar" style="display:block;">
+    <ul>
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'profile' %}">Profile</a></li>
+      <li><a href="{% url 'chatbot' %}">Chatbot</a></li>
+      {% if user.is_authenticated %}
+      <li><a href= "{% url 'logout' %}">Logout</a></li>
+      {% else %}
+      <li><a href="{% url 'login' %}">Login</a></li>
+      <li><a href="{% url 'signup' %}">Signup</a></li>
+      {% endif %}
+    </ul>
+  </div> 
+
+<style>
+  .split {
+  height: 80%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 10%;
+
+}
+.left {
+  left:0%;
+  margin-right:5%;
+  margin-top:6%;
+  
+}
+.right {
+  right: 0%;
+  margin-left:5%;
+  margin-top:5.7%;
+  background-color:#E7EAEA;
+}
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class ="split right" >
+
+{% if user.is_authenticated %}
+  <h2 style="padding-left: 10px;">Hi {{ user.username }}! </h2>
+{% else %}
+  <p style="padding-left: 10px;">You are not logged in. In order to get the best from the EcoPal app, we reccomend to sign up or create an account. However if you're just visiting thats okay too, feel free to browse.</p>
+{% endif %}
+
+<p style="padding-left: 10px;">Welcome to EcoPal, your personal recycling application to assist you in all your recycling needs. If you want to search for any locations to recycle or if you have any recycling questions this is the place to be! The chatbot will answer any queries you may have regarding recycling and the search to the right will give you results for places you can go to get rid of anything in a clean and environment friendly way.</p>
+</div>
+
+
+<div class="split left">   
+<form>
+  <label for="Location"><h2>Have a search for local places to recycle.</h2></label>
+  <label for="slider-1">Distance:</label>
+  <input type="range" name="slider-1" id="slider-1" min="0" max = "100" value="50" >
+  <button id="LocateButton" onclick="getLocation()">Search</button>
+</form>
+</div>
+<p id="home"></p>
+
+<script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      }
+      else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+
+    function showPosition(position) {      
+      var distance = document.getElementById("slider-1").value;
+      $.ajax(
+        {
+          type:"post",
+          url: "search/",
+          datatype: 'json',
+          data:{
+                  "Distance" : distance,
+                  csrfmiddlewaretoken: '{{ csrf_token }}',
+                  "Latitude" : position.coords.latitude,
+                  "Longitude" : position.coords.longitude
+          },
+
+          success : function(data){
+            //ocument.getElementById("home").innerHTML = "data";
+            //window.location.href = 'http://127.0.0.1:8000/search/results';
+            //alert(data);
+            localStorage.setItem('myMainKey', data);
+            window.location.href = "search/results";
+          },
+          error : function(){
+            alert("Nada")
+          }
+          })
+    }
+    
+
+</script>
+{% endblock %}

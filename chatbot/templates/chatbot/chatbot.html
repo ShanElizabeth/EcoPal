@@ -1,0 +1,66 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+      <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+      <link rel="stylesheet" href= {% static "/css/base.css" %} />
+      <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+      <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>  
+      <title>{% block title %}Django EcoPal ChatBot{% endblock %}</title>
+    <meta charset="utf-8">
+  </head>
+<body>
+  <div data-role="header" data-theme="b">
+    <h1>{% block head %}ChatBot{% endblock %}</h1>
+  </div>
+  <main>
+    {% block content %}
+   
+    <h1> Hello Welcome to EcoPal</h1>
+    <p> If you have any questiosn regarding recycling please ask our chatbot below!</p>
+    <form id="userInputForm" method="POST">
+      {% csrf_token %}
+      <input type="text" id ="textinput"placeholder="Type Your Question Here..." />
+      <button id="btn">ASK!</button>
+    </form>
+    <div id="chatresponseArea">
+      <p id ="chatresponse"></p>
+    </div>
+    {% endblock %}
+  </main>
+</body>
+<script>
+  $(document).ready(function(){
+    $('btn').click(function(){
+
+        var input=$("#textinput").val();
+
+        
+         $.ajax({
+            type: 'post',
+            //dataType:'json',
+            url:'getchatbot/',
+            data:{
+             "UserInput": input,
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              },
+
+            sucecss:function(data){
+              alert('in');
+              //document.getElementById('chatresponse').innerHTML = data;
+              //console.log(data);
+              },
+            error:function(data){
+              document.getElementById('chatresponse').innerHTML=data;
+              console.log("Error");
+              console.log(data);
+              alert(data);
+            },
+            });
+    
+
+  });
+  });
+
+</script>
+</html>

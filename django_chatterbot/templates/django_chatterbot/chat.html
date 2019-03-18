@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}ChatBot{% endblock %}
+{% block head %}ChatBot{% endblock %}
+{% block content %}
+    <h1> Hello Welcome to EcoPal</h1>
+    <p> If you have any questiosn regarding recycling please ask our chatbot below!</p>
+    <form>
+        <input type="text" name="input_1" id="input_1" placeholder="Ask me any recyling questions..">
+        <button id="ChatButton" onclick="getAnswer()">Search</button>
+    </form>
+    <div id="chat"></p>
+      <div class="row">
+      </div>
+      
+    <script>
+        function getAnswer() {
+            var text = document.getElementById("input_1").value;
+            $.ajax(
+              {
+                type:"post",
+                url: "get_response",
+                datatype: 'json',
+                data:{
+                        "text" : text,
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+      
+               success: function (data){
+                alert("succes")
+                //function createRow(text) {
+              //  var $row = $('<li class="list-group-item"></li>');
+                //   $row.text(text);
+                  // $chatlog.append($row);
+      }
+                     $("#chat").html(data);
+            },
+                error : function(){
+                  alert("An Error Has Occured")
+                }
+                })
+          }
+    </script>
+{% endblock %}

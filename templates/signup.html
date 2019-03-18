@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+{% block head %}
+<div data-role="navbar">
+  <ul>
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'profile' %}">Profile</a></li>
+    <li><a href="{% url 'chatbot' %}">Chatbot</a></li>
+    {% if user.is_authenticated %}
+    <li><a href= "{% url 'logout' %}">Logout</a></li>
+    {% else %}
+    <li><a href="{% url 'login' %}">Login</a></li>
+    <li><a href="{% url 'signup' %}">Signup</a></li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock %}
+{% block content %}
+  <h2>Sign up</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign up</button>
+  </form>
+{% endblock %}

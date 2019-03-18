@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Results{% endblock %}
+{% block head %}Local Recycling places
+<div data-role="navbar">
+    <ul>
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'profile' %}">Profile</a></li>
+      <li><a href="{% url 'chatbot' %}">Chatbot</a></li>
+      {% if user.is_authenticated %}
+      <li><a href= "{% url 'logout' %}">Logout</a></li>
+      {% else %}
+      <li><a href="{% url 'login' %}">Login</a></li>
+      <li><a href="{% url 'signup' %}">Signup</a></li>
+      {% endif %}
+    </ul>
+</div>
+{% endblock %}
+{% block content %}
+<p id= "txt"></p>
+<p id="save"></p>
+{% if user.is_authenticated %}
+<form>
+    <button id = "saveSearch" onclick="save()">Save your search</button>
+</form>
+{% else %}
+<h2>Login so you can save your searches!</h2>
+{% endif %}
+
+<script>
+var data = localStorage.getItem('myMainKey');
+//alert(data);
+//document.getElementById("txt").innerHTML = data;
+var i;
+//data = data.slice(0, data.length-1)
+
+var array = data.split(" ");
+var dis = array[array.length-1];
+if (array[0] == "There"){
+    var text = array.join(" ");
+}
+else{
+    var text = ("All places available to recycle within " + dis + " Km of your location.").bold().big();
+    for (i = 0; i < array.length-1; i++) { 
+        if (array[i] == "Result:"){
+            text += "<br>" + "<br>" + array[i].bold().big() + " ";
+        }
+        else {
+            text += array[i] + " "
+        }
+    }
+}
+document.getElementById("txt").innerHTML = text;
+
+function save(){
+    //var d = localStorage.getItem('myMainKey');
+    var d = data ;
+    $.ajax(
+        {
+          type:"post",
+          url: "save/",
+          datatype: 'json',
+          data:{
+                  "Data" : d,
+                  csrfmiddlewaretoken: '{{ csrf_token }}',
+          },
+
+          success : function(data){
+                alert("Saved, visit your profile page to view your searches.")
+                document.getElementById("txt").innerHTML = "Saved."
+           },
+          error : function(){
+            alert("Nada")
+          }
+        
+    })
+}
+
+</script>
+
+{% endblock %}

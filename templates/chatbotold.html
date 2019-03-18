@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}ChatBot{% endblock %}
+{% block head %}ChatBot
+<div data-role="navbar">
+  <ul>
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'profile' %}">Profile</a></li>
+    <li><a href="{% url 'chatbot' %}">Chatbot</a></li>
+    {% if user.is_authenticated %}
+    <li><a href= "{% url 'logout' %}">Logout</a></li>
+    {% else %}
+    <li><a href="{% url 'login' %}">Login</a></li>
+    <li><a href="{% url 'signup' %}">Signup</a></li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock %}
+{% block content %}
+    <h1> Hello Welcome to EcoPal</h1>
+    <p> If you have any questions regarding recycling please ask our chatbot below!</p>
+    <p>Replies displayed here!</p>
+     <p><b>EcoPal says:</b></p><p id="answer"></p>
+    {% if user.is_authenticated %}
+    <form>
+        <button id ="savebtn" style="display:none;" onclick="saveanswerhtml()">Click To save Answer</button>
+    </form>
+       <p id="savedNot"></p>
+    {% else %}
+    <h2>Login so you can save your answers!</h2>
+    {% endif %}
+     <form>
+      <button id ="savebtn" style="display:none;" onclick="saveanswerhtml()">Click To save Answer</button>
+     </form>
+     <p id="savedNot"></p>
+    <form >
+        <input type="text" name="input_1" id="input_1" placeholder="Ask me any recyling questions..">
+        <button id="ChatButton">Search</button>
+    </form>
+
+      
+    <script>
+        function getAnswer() {
+            var text = document.getElementById("input_1").value;
+            
+             return $.ajax(
+              {
+                type:"post",
+                url: "ask/",
+                datatype: 'json',
+                data:{'Question': text,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+              },
+                cache: true,
+      
+               //success: function (reply){
+                 //  console.log(reply)
+                //tmp=reply;
+                //console.log(tmp);
+                //$("#MyDiv").html(reply);
+                //data wont print because it says its undefined reload new page with data
+                //localStorage.setItem("chat", data);
+
+            //window.location.href = "response/";
+              //  var chat=data;
+              //  location.reaload();
+              //if(data.success==null){
+                //location.reload();
+              
+                //},
+                    
+                //error : function(){
+                  //alert("An Error Has Occured")
+                //}
+              //  });
+          });
+           }
+          $(document).ready(function(){
+            $('#ChatButton').click(function(){
+                $.when(getAnswer()).then(function successHandler(data){
+                  $("#answer").html(data);
+                  
+                  localStorage.setItem("answer",data);
+
+                  var x=document.getElementById("savebtn");
+                  if(x.style.display==="none"){
+
+                    x.style.display="block";
+                  }
+                  
+                },
+
+                  function errorHnadler(){console.log("error occured");
+                });
+                return false;
+            });
+
+
+          })
+          //save answers function
+            function saveanswerhtml() {
+              var answer = localStorage.getItem("answer");
+             $.ajax(
+              {
+                type:"post",
+                url: "saveanswer/",
+                datatype: 'json',
+                data:{'Answer': answer,
+                     csrfmiddlewaretoken: '{{ csrf_token }}',
+                   },
+                cache: true,
+      
+               success: function (reply){
+                  $("#savedNot").html("Saved");
+                    //causes loop
+                  //var x=document.getElementById("savebtn");
+                  
+                  //if(x.style.display==="block"){
+                   //x.style.display="none";
+                
+                  },
+  
+                                  
+                error : function(){
+                  alert("An Error Has Occured")
+                }
+                });
+}
+    </script>
+{% endblock %}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+      <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+      <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+      <title>{% block title %}Django EcoPal{% endblock %}</title>
+    <meta charset="utf-8">
+  </head>
+<body>
+  <div data-role="header" data-theme="a">
+    <h1>{% block head %}Base{% endblock %}</h1>
+  </div>
+  <main>
+    {% block content %}
+    This is EcoPal, your personal recycling app to assist you in your Recycling needs.
+    If you'd like to search for local places to recycle, please visit our <a href="{% url 'home' %}">Home</a> page.
+    {% endblock %}
+  </main>
+</body>
+</html>

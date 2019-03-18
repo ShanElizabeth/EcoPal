@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}Your Profile{% endblock %}
+{% block head %}Profile
+<div data-role="navbar">
+  <ul>
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'profile' %}">Profile</a></li>
+    <li><a href="{% url 'chatbot' %}">Chatbot</a></li>
+    {% if user.is_authenticated %}
+    <li><a href= "{% url 'logout' %}">Logout</a></li>
+    {% else %}
+    <li><a href="{% url 'login' %}">Login</a></li>
+    <li><a href="{% url 'signup' %}">Signup</a></li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock %}
+
+
+
+
+{% block content %}
+
+{% if user.is_authenticated %}
+  <h1>Hi {{ user.username }}!</h1>
+{% else %}
+  <p>You are not logged in</p>
+{% endif %}
+{% if user.is_authenticated %}
+{% if object.user %}
+    <h2> Your Saved Chatbot Answers</h2>
+    <p> {{object.answer}}</h>
+    <h2> Your Saved Recycling Searches</h2>
+    <p>{{object.result}}</p>
+{% endif %}
+{% endif %}
+
+{% endblock %}

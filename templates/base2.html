@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Welcome To EcoPal{% endblock %}</title>
+</head>
+<body>
+  <main>
+    {% block content %}
+    This is EcoPal, your personal recycling app to assist you in your Recycling needs.
+    If you'd like to search for local places to recycle, please visit our <a href="{% url 'home' %}">Home</a> page.
+    {% endblock %}
+  </main>
+</body>
+</html>
